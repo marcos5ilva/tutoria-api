@@ -8,11 +8,11 @@ interface ScheduleItem {
     to: string;
   }
 
-export default class Controllers{
+export default class LessonsController{
 async index(req: Request, resp: Response){
   const filters = req. query;
   const subject = filters.subject as string;
-  const week_day = filters.subject as string;
+  const week_day = filters.week_day as string;
   const time = filters.time as string;
 
 if (!filters.week_day || !filters.subject || !filters.time){
@@ -21,9 +21,17 @@ return resp.status(400).json({
 })
 }
 const timeConverter = new TimeConverter();
-const timeToMinutes = timeConverter.hourToMinute(time);
+const timeInMinutes = timeConverter.hourToMinute(time);
 
 const lessons = await db('lessons')
+.whereExists(function(){
+  this.select('lesson_schedule.*')
+  .from('lesson_schedule')
+  .whereRaw('`lesson_schedule`.`lesson_id` = `lessons`.`id`')
+  .whereRaw('`lesson_schedule`.`week_day` = ??',[Number(week_day)])
+  .whereRaw('`lesson_schedule`.`from` <=??', timeInMinutes)
+  .whereRaw('`lesson_schedule`.`to` >??', timeInMinutes)
+})
 .where('lessons.subject', '=', subject)
 .join('users', 'lessons.user_id', '=','users.id')
 .select(['lessons.*', 'users.*']);
