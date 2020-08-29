@@ -43,10 +43,7 @@ return resp.json(lessons);
     async create (req : Request, resp: Response) {
         const { name, avatar, whatsapp, bio, subject, cost, schedule } = req.body;
       
-        
         const trx = await db.transaction();
-      
-        
         try {
           
           const insertedUserIds = await trx('users').insert({
@@ -54,17 +51,17 @@ return resp.json(lessons);
             avatar,
             whatsapp,
             bio,
-          });
-        
+          }).returning("id");
           
+        
           const user_id = insertedUserIds[0];
           const insertedLessonsIds = await trx('lessons').insert({
             subject,
             cost,
             user_id,
-          });
+          }).returning("id");
         
-        
+         
         
           const lesson_id = insertedLessonsIds[0];
           const timeConverter = new TimeConverter();
@@ -84,6 +81,7 @@ return resp.json(lessons);
           return resp.status(201).send();
         } catch (err) {
           await trx.rollback();
+          console.log(err)
         return resp.status(400).json({
           error: 'Unexpected error while creating new lesson'
         })
