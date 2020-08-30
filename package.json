@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "npm  run build && node build/src/server.js",
+    "start": "node dist/src/server.js",
     "start:dev": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
-    "build": "rimraf ./build && tsc"
+    "build": "rimraf ./dist && tsc"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
