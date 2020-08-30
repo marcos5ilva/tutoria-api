@@ -4,10 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts",
-    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest"
+    "start": "yarn  run build && node build/src/server.js",
+    "start:dev": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts",
+    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
+    "build": "rimraf ./build && tsc"
   },
   "devDependencies": {
+    "rimraf": "^3.0.2",
     "ts-node-dev": "^1.0.0-pre.57",
     "typescript": "^3.9.7"
   },
@@ -24,7 +27,8 @@
     "sqlite": "^4.0.14",
     "sqlite3": "^5.0.0"
   },
-  "engines":{
-    "node":"12.13.0"
+  "engines": {
+    "node": "12.13.0"
   }
+  
 }
